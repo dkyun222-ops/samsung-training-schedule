@@ -1,0 +1,1506 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026 하반기 교육일정표</title>
+<style>
+  :root{
+    --primary: #5B4FE0;
+    --primary-dark: #4438C2;
+    --primary-light: #EFECFF;
+    --ink: #1F2033;
+    --ink-soft: #6B6D82;
+    --bg: #F5F5FB;
+    --card: #FFFFFF;
+    --border: #E6E4F5;
+    --danger: #E0355B;
+    --danger-light: #FDEAEE;
+    --ok: #2FA875;
+    --route-lgu: #E0357C;
+    --route-kt: #E0433B;
+    --route-skt: #E08A2B;
+    --route-etc: #6B6D82;
+    --radius: 14px;
+    --shadow: 0 4px 16px rgba(60,50,140,0.08);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background: transparent;
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .app{ max-width: 960px; margin: 0 auto; padding: 4px; }
+
+  /* Header */
+  .header{
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    border-radius: var(--radius);
+    padding: 20px 22px;
+    color: white;
+    margin-bottom: 14px;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::after{
+    content:"";
+    position:absolute; right:-40px; top:-40px; width:160px; height:160px;
+    background: rgba(255,255,255,0.08); border-radius: 50%;
+  }
+  .header-top{ display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap; }
+  .header h1{ font-size: 19px; margin:0 0 4px 0; font-weight:800; letter-spacing:-0.3px;}
+  .header p{ margin:0; font-size:12.5px; opacity:0.85; }
+  .month-nav{ display:flex; align-items:center; gap:10px; margin-top:14px; }
+  .month-nav button{
+    background: rgba(255,255,255,0.16); border:none; color:white; width:30px; height:30px;
+    border-radius:8px; font-size:15px; cursor:pointer; display:flex; align-items:center; justify-content:center;
+    transition: background .15s;
+  }
+  .month-nav button:hover{ background: rgba(255,255,255,0.28); }
+  .month-tabs{ display:flex; gap:6px; flex:1; overflow-x:auto; padding-bottom:2px; }
+  .month-tab{
+    flex-shrink:0; padding:6px 12px; border-radius:20px; font-size:12.5px; font-weight:600;
+    background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.85); cursor:pointer; border:1px solid transparent;
+    transition: all .15s;
+    white-space:nowrap;
+  }
+  .month-tab.active{ background: white; color: var(--primary-dark); }
+  .sync-info{ font-size:11px; color: rgba(255,255,255,0.65); margin-top:8px; display:flex; align-items:center; gap:5px; }
+  .sync-dot{ width:6px; height:6px; border-radius:50%; background:#7CFFB2; display:inline-block; }
+
+  /* Group tabs */
+  .group-tabs{ display:flex; gap:8px; margin: 4px 4px 14px; }
+  .group-tab{
+    flex:1; padding: 12px 14px; border-radius: 12px; background: var(--card); border: 1.5px solid var(--border);
+    cursor:pointer; text-align:left; transition: all .15s;
+  }
+  .group-tab:hover{ border-color: var(--primary); }
+  .group-tab.active{ border-color: var(--primary); background: var(--primary-light); }
+  .group-tab .g-title{ font-weight:800; font-size:14px; color: var(--ink); display:flex; align-items:center; gap:6px; }
+  .group-tab.active .g-title{ color: var(--primary-dark); }
+  .group-tab .g-desc{ font-size:11.5px; color: var(--ink-soft); margin-top:2px; }
+  .group-tab .g-count{ margin-left:auto; font-size:11px; font-weight:700; background: var(--primary); color:white; border-radius:20px; padding:1px 8px; }
+  .group-tab.active .g-count{ background: var(--primary-dark); }
+
+  /* Region filter */
+  .region-filter{ display:flex; gap:6px; flex-wrap:wrap; margin: 0 4px 14px; }
+  .region-chip{
+    padding: 6px 12px; border-radius: 20px; font-size:12px; font-weight:700; cursor:pointer;
+    background: var(--card); border: 1.5px solid var(--border); color: var(--ink-soft); transition: all .15s;
+  }
+  .region-chip:hover{ border-color: var(--primary); color: var(--primary-dark); }
+  .region-chip.active{ background: var(--primary); border-color: var(--primary); color:white; }
+
+  /* Legend */
+  .legend{ display:flex; gap:14px; flex-wrap:wrap; margin: 2px 4px 12px; font-size:12px; color: var(--ink-soft); }
+  .legend-item{ display:flex; align-items:center; gap:5px; }
+  .dot{ width:9px; height:9px; border-radius:50%; display:inline-block; }
+
+  /* Calendar */
+  .cal-card{ background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 14px; margin-bottom: 16px; }
+  .weekdays{ display:grid; grid-template-columns: repeat(7,1fr); text-align:center; font-size:12px; color: var(--ink-soft); font-weight:700; margin-bottom:6px; }
+  .weekdays div{ padding:4px 0; }
+  .weekdays .sun{ color: var(--danger); }
+  .weekdays .sat{ color: var(--primary); }
+  .grid{ display:grid; grid-template-columns: repeat(7,1fr); gap:4px; }
+  .day{
+    min-height: 78px; border-radius: 10px; padding: 6px 5px; background: #FAFAFD; border: 1px solid transparent;
+    cursor:pointer; transition: all .12s; position:relative; display:flex; flex-direction:column; gap:3px;
+  }
+  .day:hover{ background: var(--primary-light); border-color: var(--border); }
+  .day.empty{ background: transparent; cursor: default; }
+  .day.empty:hover{ background: transparent; }
+  .day.today{ border-color: var(--primary); }
+  .day-num{ font-size:12px; font-weight:700; color: var(--ink-soft); }
+  .day.sun .day-num{ color: var(--danger); }
+  .day.sat .day-num{ color: var(--primary); }
+  .day.today .day-num{ color: var(--primary-dark); }
+  .day.holiday{ background: rgba(255,59,48,0.08); }
+  .day.holiday .day-num{ color: #ff3b30; font-weight:800; }
+  .holiday-label{ font-size:8px; color: #ff3b30; font-weight:700; margin-left:2px; }
+  .chips{ display:flex; flex-direction:column; gap:2px; overflow:hidden; }
+  .chip{
+    font-size:10.5px; padding:2px 5px; border-radius:6px; color:white; font-weight:600;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis; position:relative; cursor:pointer;
+  }
+  .chip:hover::after{
+    content: attr(data-tooltip);
+    position:absolute; bottom:100%; left:0; white-space:normal; background: var(--ink);
+    color:white; padding:8px 10px; border-radius:8px; font-size:11px; font-weight:400;
+    z-index:50; min-width:200px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    margin-bottom:6px; line-height:1.4;
+  }
+  .chip-popup{
+    background: #2a2a3e; color: #fff; padding: 10px 12px; border-radius: 10px;
+    font-size: 12px; box-shadow: 0 6px 20px rgba(0,0,0,0.4); z-index: 100;
+    pointer-events: none; max-width: 180px;
+  }
+  .chip-more{ font-size:10px; color: var(--ink-soft); padding-left:2px; }
+
+  /* Empty state / loading */
+  .status-msg{ text-align:center; padding: 30px 10px; color: var(--ink-soft); font-size:13px; }
+
+  /* Modal */
+  .overlay{
+    position:fixed; inset:0; background: rgba(20,16,50,0.42); display:none; align-items:flex-start; justify-content:center;
+    padding: 20px 12px; overflow-y:auto; z-index: 100; backdrop-filter: blur(2px);
+  }
+  .overlay.show{ display:flex; }
+  .modal{
+    background: var(--card); border-radius: 18px; width:100%; max-width: 440px; margin-top: 20px;
+    box-shadow: 0 20px 50px rgba(30,20,80,0.25); overflow:hidden;
+  }
+  .modal-head{
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color:white;
+    padding: 16px 18px; display:flex; align-items:center; justify-content:space-between;
+  }
+  .modal-head .title{ font-weight:800; font-size:15px; }
+  .modal-head .date-badge{ font-size:12px; opacity:0.85; margin-top:2px; }
+  .modal-head button.close{ background:rgba(255,255,255,0.18); border:none; color:white; width:26px;height:26px; border-radius:50%; cursor:pointer; font-size:14px; }
+  .modal-body{ padding: 16px 18px; max-height: 66vh; overflow-y:auto; }
+
+  .entry-list{ display:flex; flex-direction:column; gap:8px; margin-bottom: 14px; }
+  .entry-item{
+    border:1px solid var(--border); border-radius:12px; padding:10px 12px; cursor:pointer; transition: background .12s;
+    display:flex; flex-direction:column; gap:4px;
+  }
+  .entry-item:hover{ background: var(--primary-light); }
+  .entry-top{ display:flex; align-items:center; gap:8px; }
+  .route-tag{ font-size:10.5px; padding:2px 7px; border-radius:6px; color:white; font-weight:700; }
+  .entry-name{ font-weight:700; font-size:13.5px; }
+  .entry-time{ margin-left:auto; font-size:12px; color: var(--ink-soft); }
+  .entry-detail{ font-size:12.5px; color: var(--ink-soft); }
+
+  .add-btn{
+    width:100%; padding:11px; border-radius:10px; border: 1.5px dashed var(--primary); background: var(--primary-light);
+    color: var(--primary-dark); font-weight:700; font-size:13.5px; cursor:pointer;
+  }
+  .add-btn:hover{ background: #E4E0FF; }
+
+  .form-grid{ display:flex; flex-direction:column; gap:12px; }
+  .field label{ display:block; font-size:12.5px; font-weight:700; color: var(--ink); margin-bottom:5px; }
+  .field .hint{ font-weight:400; color: var(--ink-soft); font-size:11px; margin-left:4px; }
+  .field .req{ color: var(--danger); font-weight:700; }
+  .field input, .field select, .field textarea{
+    width:100%; padding: 9px 11px; border-radius:9px; border: 1.5px solid var(--border); font-size:13.5px;
+    font-family: inherit; color: var(--ink); background: #FCFCFF;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus{ outline:none; border-color: var(--primary); background: white; }
+  .field textarea{ resize: vertical; min-height: 56px; }
+  .row2{ display:grid; grid-template-columns: 1fr 1fr; gap:10px; }
+  .name-row{ display:flex; gap:8px; }
+  .name-row select{ flex: 1; }
+  .name-row input{ flex: 1; display:none; }
+  .name-row.custom select{ display:none; }
+  .name-row.custom input{ display:block; }
+  .switch-link{ font-size:11.5px; color: var(--primary); cursor:pointer; white-space:nowrap; align-self:center; text-decoration:underline; }
+
+  .modal-footer{ padding: 14px 18px 18px; display:flex; gap:8px; }
+  .btn{ flex:1; padding: 11px; border-radius:10px; border:none; font-weight:700; font-size:13.5px; cursor:pointer; transition: opacity .15s; }
+  .btn:hover{ opacity:0.9; }
+  .btn-primary{ background: var(--primary); color:white; }
+  .btn-secondary{ background: #F1F0FA; color: var(--ink-soft); }
+  .btn-danger{ background: var(--danger-light); color: var(--danger); }
+  .btn:disabled{ opacity:0.5; cursor:not-allowed; }
+
+  .error-msg{ color: var(--danger); font-size:12px; margin-top:4px; display:none; }
+  .error-msg.show{ display:block; }
+
+  .toast{
+    position:fixed; bottom:18px; left:50%; transform: translateX(-50%) translateY(10px); background: var(--ink);
+    color:white; padding: 10px 18px; border-radius: 10px; font-size:13px; opacity:0; transition: all .25s; z-index:200; pointer-events:none;
+  }
+  .toast.show{ opacity:1; transform: translateX(-50%) translateY(0); }
+
+  @media (max-width: 480px){
+    .day{ min-height: 64px; }
+    .chip{ font-size:9.5px; }
+    .row2{ grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="app" id="app">
+
+  <div class="header">
+    <div class="header-top">
+      <div>
+        <h1>2026 Fieldforce Training그룹 현장 교육일정표</h1>
+        <p>날짜를 눌러 원하는 교육 일정을 신청하세요 · 실시간 공유 캘린더</p>
+      </div>
+      <div style="display:flex; gap:6px; flex-shrink:0;">
+        <button id="adminBtn" style="background:rgba(255,255,255,0.2); border:none; color:white; padding:6px 25px; border-radius:8px; font-size:11px; font-weight:700; cursor:pointer; transition: background .15s; white-space:nowrap; min-height:32px; display:flex; align-items:center; justify-content:center;" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">🔐 관리자 모드</button>
+        <button id="statsBtn" style="background:rgba(255,255,255,0.2); border:none; color:white; padding:6px 25px; border-radius:8px; font-size:11px; font-weight:700; cursor:pointer; transition: background .15s; white-space:nowrap; min-height:32px; display:none; align-items:center; justify-content:center;" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">📊 월별 통계</button>
+        <button id="mapBtn" style="background:rgba(255,255,255,0.2); border:none; color:white; padding:6px 25px; border-radius:8px; font-size:11px; font-weight:700; cursor:pointer; transition: background .15s; white-space:nowrap; min-height:32px; display:none; align-items:center; justify-content:center;" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">🏪 매장별 교육 현황</button>
+      </div>
+    </div>
+    <div class="month-nav">
+      <button id="prevMonthBtn">‹</button>
+      <div class="month-tabs" id="monthTabs"></div>
+      <button id="nextMonthBtn">›</button>
+    </div>
+    <div class="sync-info" id="syncInfo">자동 동기화 대기 중...</div>
+  </div>
+
+  <div class="group-tabs" id="groupTabs"></div>
+
+  <div class="region-filter" id="regionFilter"></div>
+
+  <div class="legend" id="legend"></div>
+
+  <div class="cal-card">
+    <div class="weekdays">
+      <div class="sun">일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div class="sat">토</div>
+    </div>
+    <div class="grid" id="calGrid"></div>
+  </div>
+
+  <div class="status-msg" id="statusMsg" style="display:none;"></div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="modal" id="modal"></div>
+</div>
+
+<div class="overlay" id="mapOverlay" style="display:none;">
+  <div class="modal" id="mapModal" style="width:90%; max-width:1000px; max-height:80vh; overflow:auto; padding:0;">
+    <div style="padding:20px; border-bottom:1px solid #e5e7eb; display:flex; justify-content:space-between; align-items:center;">
+      <h2 style="font-size:18px; font-weight:700; color:#1a1a2e; margin:0;">🏪 매장별 교육 현황</h2>
+      <button id="mapCloseBtn" style="background:none; border:none; font-size:24px; cursor:pointer; color:#6b7280;">×</button>
+    </div>
+    <div style="padding:20px;">
+      <div style="margin-bottom:20px; display:flex; gap:20px; flex-wrap:wrap;">
+        <div>
+          <label style="display:block; font-size:13px; font-weight:700; color:#1a1a2e; margin-bottom:8px; text-transform:uppercase; letter-spacing:0.5px;">지역 선택</label>
+          <select id="mapRegionSelect" style="width:200px; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-size:14px; cursor:pointer; background:white;">
+            <option value="">-- 전체 지역 --</option>
+          </select>
+        </div>
+        <div>
+          <label style="display:block; font-size:13px; font-weight:700; color:#1a1a2e; margin-bottom:8px; text-transform:uppercase; letter-spacing:0.5px;">매장 검색</label>
+          <input type="text" id="mapSearchInput" placeholder="매장명 입력..." style="width:200px; padding:10px; border:1px solid #e5e7eb; border-radius:8px; font-size:14px;">
+        </div>
+      </div>
+      <div id="mapStoresContainer" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(320px, 1fr)); gap:16px;"></div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="statsOverlay" style="display:none;">
+  <div class="modal" id="statsModal" style="width:95%; max-width:1200px; max-height:85vh; overflow:auto; padding:0;">
+    <div style="padding:20px; border-bottom:1px solid #e5e7eb; display:flex; justify-content:space-between; align-items:center;">
+      <h2 style="font-size:18px; font-weight:700; color:#1a1a2e; margin:0;">📊 월별 통계</h2>
+      <button id="statsCloseBtn" style="background:none; border:none; font-size:24px; cursor:pointer; color:#6b7280;">×</button>
+    </div>
+    <div style="padding:20px;">
+      <div style="margin-bottom:20px;">
+        <label style="display:block; font-size:13px; font-weight:700; color:#1a1a2e; margin-bottom:8px;">그룹 선택</label>
+        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px;">
+          <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
+            <input type="radio" name="statsGroup" value="MX" checked style="cursor:pointer;"> MX
+          </label>
+          <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
+            <input type="radio" name="statsGroup" value="CE" style="cursor:pointer;"> CE
+          </label>
+        </div>
+      </div>
+      
+      <div style="margin-bottom:20px;">
+        <label style="display:block; font-size:13px; font-weight:700; color:#1a1a2e; margin-bottom:8px;">통계 기간</label>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
+            <input type="radio" name="statsPeriod" value="current" checked style="cursor:pointer;"> 현재 월만
+          </label>
+          <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
+            <input type="radio" name="statsPeriod" value="cumulative" style="cursor:pointer;"> 누적 통계 (8-12월)
+          </label>
+        </div>
+      </div>
+      
+      <div id="statsContainer" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(400px, 1fr)); gap:30px; padding:20px 0;"></div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="adminOverlay" style="display:none; justify-content:center; align-items:center;">
+  <div class="modal" id="adminModal" style="width:90%; max-width:400px; padding:30px; position:relative;">
+    <h2 style="font-size:20px; font-weight:700; color:#1a1a2e; margin-bottom:20px; text-align:center;">🔐 관리자 모드</h2>
+    <p style="font-size:13px; color:#6b7280; text-align:center; margin-bottom:20px;">관리자 비밀번호를 입력해주세요</p>
+    
+    <input type="password" id="adminPwInput" placeholder="비밀번호 입력" style="width:100%; padding:12px; border:1px solid #e5e7eb; border-radius:8px; font-size:14px; box-sizing:border-box; margin-bottom:16px;">
+    
+    <div id="adminError" style="color:#ff3b30; font-size:12px; text-align:center; margin-bottom:16px; display:none; line-height:1.4;"></div>
+    
+    <div style="display:flex; gap:10px;">
+      <button id="adminOkBtn" style="flex:1; padding:12px; background:#5B4FE0; color:white; border:none; border-radius:8px; font-weight:700; cursor:pointer; transition:background .2s;" onmouseover="this.style.background='#4438C2'" onmouseout="this.style.background='#5B4FE0'">확인</button>
+      <button id="adminCloseBtn" style="flex:1; padding:12px; background:#e5e7eb; color:#1a1a2e; border:none; border-radius:8px; font-weight:700; cursor:pointer; transition:background .2s;" onmouseover="this.style.background='#d1d5db'" onmouseout="this.style.background='#e5e7eb'">취소</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="instructorOverlay" style="display:none; justify-content:center; align-items:center;">
+  <div class="modal" id="instructorModal" style="width:90%; max-width:400px; padding:30px; position:relative;">
+    <h2 style="font-size:20px; font-weight:700; color:#1a1a2e; margin-bottom:20px; text-align:center;">🏫 강사 정보 입력</h2>
+    <p style="font-size:13px; color:#6b7280; text-align:center; margin-bottom:20px;">강사 비밀번호를 입력해주세요</p>
+    
+    <input type="password" id="instructorPwInput" placeholder="비밀번호 입력" style="width:100%; padding:12px; border:1px solid #e5e7eb; border-radius:8px; font-size:14px; box-sizing:border-box; margin-bottom:16px;">
+    
+    <div id="instructorError" style="color:#ff3b30; font-size:12px; text-align:center; margin-bottom:16px; display:none; line-height:1.4;"></div>
+    
+    <div style="display:flex; gap:10px;">
+      <button id="instructorOkBtn" style="flex:1; padding:12px; background:#5B4FE0; color:white; border:none; border-radius:8px; font-weight:700; cursor:pointer; transition:background .2s;" onmouseover="this.style.background='#4438C2'" onmouseout="this.style.background='#5B4FE0'">확인</button>
+      <button id="instructorCloseBtn" style="flex:1; padding:12px; background:#e5e7eb; color:#1a1a2e; border:none; border-radius:8px; font-weight:700; cursor:pointer; transition:background .2s;" onmouseover="this.style.background='#d1d5db'" onmouseout="this.style.background='#e5e7eb'">취소</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const ROUTES = [
+    { key:'LGU+', color:'#E0357C' },
+    { key:'KT', color:'#E0433B' },
+    { key:'SKT', color:'#E08A2B' },
+    { key:'하이마트', color:'#8B1E3F' },
+    { key:'삼성스토어', color:'#1428A0' },
+    { key:'이마트', color:'#B8860B' },
+    { key:'일렉트로마트', color:'#D84315' },
+    { key:'전자랜드', color:'#2E7D32' },
+    { key:'코스트코', color:'#6A1B9A' },
+    { key:'기타', color:'#6B6D82' }
+  ];
+  // 그룹별로 노출할 경로 목록과 순서
+  const ROUTE_KEYS_BY_GROUP = {
+    MX: ['SKT','KT','LGU+','삼성스토어','하이마트','전자랜드','이마트','일렉트로마트','코스트코','기타'],
+    CE: ['삼성스토어','하이마트','전자랜드','이마트','일렉트로마트','코스트코','기타']
+  };
+  function routesForGroup(group){
+    const keys = ROUTE_KEYS_BY_GROUP[group];
+    if(!keys) return ROUTES;
+    return keys.map(k => ROUTES.find(r=>r.key===k)).filter(Boolean);
+  }
+  // 강사 이름 목록: 나중에 받으면 아래 배열에 채워주면 됩니다. 예: ['홍길동','이순신']
+  const INSTRUCTOR_PRESETS = [];
+  // ↓↓↓ 구글 Apps Script 웹앱 배포 후 발급된 URL을 여기에 붙여넣으세요.
+  // 비워두면(빈 문자열) Claude 아티팩트의 공유 저장소를 그대로 사용합니다.
+  const APPS_SCRIPT_URL = '';
+  const MONTHS = [8,9,10,11,12];
+  const YEAR = 2026;
+  const HOLIDAYS = {
+    '2026-08-15': '광복절',
+    '2026-09-24': '추석 전날',
+    '2026-09-25': '추석',
+    '2026-09-26': '추석 다음날',
+    '2026-10-03': '개천절',
+    '2026-10-09': '한글날',
+    '2026-12-25': '크리스마스'
+  };
+
+  const GROUPS = [
+    { key:'MX', label:'MX', desc:'모바일 · PC · 태블릿 · 웨어러블 교육 대상' },
+    { key:'CE', label:'CE', desc:'리빙 · 주방 · TV 교육 대상' }
+  ];
+  const REGIONS = ['서울경기북부','인천','경기남부','강원','대전충청','광주전라','대구경북','부산경남','제주'];
+  const EDUCATION_TYPES = [
+    { key:'hub', label:'거점 집합교육', icon:'📍' },
+    { key:'store', label:'매장 방문교육', icon:'🏪' }
+  ];
+  function storageKeyFor(group){ return `schedule-entries-v1-${group}`; }
+
+  let currentGroup = GROUPS[0].key;
+  let currentRegion = 'ALL';
+  let currentTooltip = null; // 현재 띄워진 팝업 추적
+  let entries = [];
+  let groupCounts = {}; // { MX: 3, CE: 5 }
+  let currentMonth = new Date().getFullYear() === YEAR && MONTHS.includes(new Date().getMonth()+1) ? new Date().getMonth()+1 : 8;
+  let dataLoaded = false;
+
+  const calGrid = document.getElementById('calGrid');
+  const monthTabs = document.getElementById('monthTabs');
+  const groupTabsEl = document.getElementById('groupTabs');
+  const regionFilterEl = document.getElementById('regionFilter');
+  const statusMsg = document.getElementById('statusMsg');
+  const overlay = document.getElementById('overlay');
+  const modal = document.getElementById('modal');
+  const toast = document.getElementById('toast');
+  const legend = document.getElementById('legend');
+
+
+  function routeColor(key){
+    const r = ROUTES.find(r=>r.key===key);
+    return r ? r.color : '#6B6D82';
+  }
+
+  function showToast(msg){
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(()=>toast.classList.remove('show'), 1800);
+  }
+
+  function pad(n){ return n<10 ? '0'+n : ''+n; }
+  function dateKey(y,m,d){ return `${y}-${pad(m)}-${pad(d)}`; }
+
+  async function remoteGet(group){
+    const key = storageKeyFor(group);
+    if(APPS_SCRIPT_URL){
+      const res = await fetch(`${APPS_SCRIPT_URL}?group=${encodeURIComponent(group)}`, { method:'GET', cache:'no-store' });
+      if(!res.ok) throw new Error('fetch failed');
+      const data = await res.json();
+      return Array.isArray(data) ? data : [];
+    } else {
+      const res = await window.storage.get(key, true);
+      return res && res.value ? JSON.parse(res.value) : [];
+    }
+  }
+
+  async function remoteSet(group, list){
+    const key = storageKeyFor(group);
+    if(APPS_SCRIPT_URL){
+      const res = await fetch(`${APPS_SCRIPT_URL}?group=${encodeURIComponent(group)}`, {
+        method:'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // CORS preflight 회피용
+        body: JSON.stringify(list)
+      });
+      if(!res.ok) throw new Error('save failed');
+      return true;
+    } else {
+      const result = await window.storage.set(key, JSON.stringify(list), true);
+      return !!result;
+    }
+  }
+
+  async function refreshGroupCounts(){
+    try{
+      const results = await Promise.all(GROUPS.map(g => remoteGet(g.key)));
+      GROUPS.forEach((g, i)=>{ groupCounts[g.key] = results[i].length; });
+    }catch(e){ /* 무시하고 다음 기회에 재시도 */ }
+    renderGroupTabs();
+  }
+
+  function renderGroupTabs(){
+    groupTabsEl.innerHTML = GROUPS.map(g => `
+      <div class="group-tab ${g.key===currentGroup?'active':''}" data-group="${g.key}">
+        <div class="g-title"><span>${g.label}</span><span class="g-count">${groupCounts[g.key] ?? '-'}건</span></div>
+        <div class="g-desc">${g.desc}</div>
+      </div>
+    `).join('');
+    groupTabsEl.querySelectorAll('.group-tab').forEach(el=>{
+      el.addEventListener('click', ()=>{
+        const g = el.dataset.group;
+        if(g === currentGroup) return;
+        currentGroup = g;
+        renderGroupTabs();
+        loadEntries();
+      });
+    });
+  }
+
+  function renderRegionFilter(){
+    const allChip = `<div class="region-chip ${currentRegion==='ALL'?'active':''}" data-region="ALL">전체</div>`;
+    const chips = REGIONS.map(r=>`<div class="region-chip ${currentRegion===r?'active':''}" data-region="${r}">${r}</div>`).join('');
+    regionFilterEl.innerHTML = allChip + chips;
+    regionFilterEl.querySelectorAll('.region-chip').forEach(el=>{
+      el.addEventListener('click', ()=>{
+        currentRegion = el.dataset.region;
+        renderRegionFilter();
+        renderLegend();
+        renderCalendar();
+      });
+    });
+  }
+
+  async function loadEntries(){
+    statusMsg.style.display='block';
+    statusMsg.textContent = '일정 데이터를 불러오는 중...';
+    try{
+      entries = await remoteGet(currentGroup);
+      groupCounts[currentGroup] = entries.length;
+    }catch(e){
+      entries = [];
+      statusMsg.style.display='block';
+      statusMsg.textContent = '데이터를 불러오지 못했습니다. 새로고침해주세요.';
+    }
+    dataLoaded = true;
+    if(entries) statusMsg.style.display='none';
+    renderGroupTabs();
+    renderRegionFilter();
+    renderLegend();
+    renderMonthTabs();
+    renderCalendar();
+    updateSyncLabel();
+    refreshGroupCounts();
+  }
+
+  function updateSyncLabel(){
+    const syncInfo = document.getElementById('syncInfo');
+    if(!syncInfo) return;
+    const now = new Date();
+    const hh = pad(now.getHours()), mm = pad(now.getMinutes()), ss = pad(now.getSeconds());
+    syncInfo.innerHTML = `<span class="sync-dot"></span>마지막 동기화 ${hh}:${mm}:${ss} · 15초마다 자동 갱신`;
+  }
+
+  async function pollEntries(){
+    // 모달이 열려 있으면 입력 중일 수 있으니 갱신을 건너뜁니다.
+    if(overlay.classList.contains('show')) return;
+    try{
+      entries = await remoteGet(currentGroup);
+      groupCounts[currentGroup] = entries.length;
+      renderGroupTabs();
+      renderLegend();
+      renderCalendar();
+    }catch(e){
+      // 네트워크 오류 등은 조용히 무시하고 다음 주기에 다시 시도합니다.
+    }
+    updateSyncLabel();
+  }
+
+  setInterval(pollEntries, 15000);
+
+  async function saveEntries(){
+    try{
+      const ok = await remoteSet(currentGroup, entries);
+      if(!ok){ showToast('저장에 실패했습니다. 다시 시도해주세요.'); return false; }
+      groupCounts[currentGroup] = entries.length;
+      return true;
+    }catch(e){
+      showToast('저장에 실패했습니다. 다시 시도해주세요.');
+      return false;
+    }
+  }
+
+  function visibleEntries(){
+    return currentRegion==='ALL' ? entries : entries.filter(e=>e.region===currentRegion);
+  }
+
+  function renderLegend(){
+    const groupLabel = GROUPS.find(g=>g.key===currentGroup)?.label || currentGroup;
+    const regionLabel = currentRegion==='ALL' ? '전체 지역' : currentRegion;
+    legend.innerHTML = routesForGroup(currentGroup).map(r=>`
+      <span class="legend-item"><span class="dot" style="background:${r.color}"></span>${r.key}</span>
+    `).join('') + `<span class="legend-item" style="margin-left:auto;">[${groupLabel} · ${regionLabel}] 총 ${visibleEntries().length}건 신청됨</span>`;
+  }
+
+  function renderMonthTabs(){
+    monthTabs.innerHTML = MONTHS.map(m=>`
+      <div class="month-tab ${m===currentMonth?'active':''}" data-month="${m}">${m}월</div>
+    `).join('');
+    monthTabs.querySelectorAll('.month-tab').forEach(el=>{
+      el.addEventListener('click', ()=>{
+        currentMonth = parseInt(el.dataset.month,10);
+        renderMonthTabs();
+        renderCalendar();
+      });
+    });
+  }
+
+  document.getElementById('prevMonthBtn').addEventListener('click', ()=>{
+    const idx = MONTHS.indexOf(currentMonth);
+    if(idx>0){ currentMonth = MONTHS[idx-1]; renderMonthTabs(); renderCalendar(); }
+  });
+  document.getElementById('nextMonthBtn').addEventListener('click', ()=>{
+    const idx = MONTHS.indexOf(currentMonth);
+    if(idx<MONTHS.length-1){ currentMonth = MONTHS[idx+1]; renderMonthTabs(); renderCalendar(); }
+  });
+
+  function renderCalendar(){
+    // 기존 팝업 정리
+    if(currentTooltip){
+      currentTooltip.remove();
+      currentTooltip = null;
+    }
+    calGrid.innerHTML='';
+    const firstDay = new Date(YEAR, currentMonth-1, 1);
+    const startWeekday = firstDay.getDay();
+    const daysInMonth = new Date(YEAR, currentMonth, 0).getDate();
+    const todayStr = (()=>{ const t=new Date(); return dateKey(t.getFullYear(), t.getMonth()+1, t.getDate()); })();
+
+    for(let i=0;i<startWeekday;i++){
+      const empty = document.createElement('div');
+      empty.className = 'day empty';
+      calGrid.appendChild(empty);
+    }
+
+    for(let d=1; d<=daysInMonth; d++){
+      const key = dateKey(YEAR, currentMonth, d);
+      const weekday = new Date(YEAR, currentMonth-1, d).getDay();
+      const dayEntries = visibleEntries().filter(e=>e.date===key).sort((a,b)=>(a.time||'').localeCompare(b.time||''));
+
+      const cell = document.createElement('div');
+      const isHoliday = HOLIDAYS[key];
+      cell.className = 'day' + (weekday===0?' sun':'') + (weekday===6?' sat':'') + (key===todayStr?' today':'') + (isHoliday?' holiday':'');
+      cell.innerHTML = `<div class="day-num">${d}${isHoliday ? `<span class="holiday-label">${isHoliday}</span>` : ''}</div><div class="chips">${
+        dayEntries.slice(0,3).map(e=>{
+          const eduType = EDUCATION_TYPES.find(t=>t.key===e.educationType);
+          const icon = eduType ? eduType.icon : '';
+          return `<div class="chip" style="background:${routeColor(e.route)}" data-id="${e.id}">${icon} ${escapeHtml(e.detail)}</div>`;
+        }).join('')
+      }${dayEntries.length>3 ? `<div class="chip-more">+${dayEntries.length-3}건 더보기</div>` : ''}</div>`;
+      
+      // 칩에 hover 및 click 이벤트 추가
+      Array.from(cell.querySelectorAll('.chip')).forEach(chip=>{
+        const entryId = chip.dataset.id;
+        const entry = entries.find(x=>x.id===entryId);
+        if(!entry) return;
+        
+        chip.addEventListener('mouseenter', (ev)=>{
+          // 기존 팝업 제거
+          if(currentTooltip){
+            currentTooltip.remove();
+            currentTooltip = null;
+          }
+          
+          const tooltip = document.createElement('div');
+          tooltip.className = 'chip-popup';
+          const eduType = EDUCATION_TYPES.find(t=>t.key===entry.educationType);
+          tooltip.innerHTML = `
+            <div style="font-weight:700; margin-bottom:4px;">${escapeHtml(entry.name)}</div>
+            <div style="font-size:11px; color:#ddd;">${escapeHtml(entry.region)} · ${escapeHtml(entry.route)} · ${escapeHtml(entry.time||'')}</div>
+            <div style="font-size:11px; margin-top:4px; color:#aaa;">교육: ${eduType ? eduType.icon + ' ' + eduType.label : '-'}</div>
+            <div style="font-size:11px; color:#aaa;">강사: ${escapeHtml(entry.instructor||'-')}</div>
+            <div style="font-size:11px; color:#aaa;">대상: ${escapeHtml(entry.detail||'-')}</div>
+          `;
+          document.body.appendChild(tooltip);
+          const rect = chip.getBoundingClientRect();
+          tooltip.style.position = 'fixed';
+          tooltip.style.top = (rect.top - tooltip.offsetHeight - 8) + 'px';
+          tooltip.style.left = (rect.left + rect.width/2 - tooltip.offsetWidth/2) + 'px';
+          currentTooltip = tooltip;
+        });
+        
+        chip.addEventListener('mouseleave', ()=>{
+          if(currentTooltip){
+            currentTooltip.remove();
+            currentTooltip = null;
+          }
+        });
+        
+        chip.addEventListener('click', ()=>{
+          openFormModal({date: key, entry});
+        });
+      });
+      
+      cell.addEventListener('click', (ev)=>{
+        // 칩이 아닌 다른 곳을 클릭했으면 day modal 열기
+        if(!ev.target.classList.contains('chip')){
+          openDayModal(key);
+        }
+      });
+      calGrid.appendChild(cell);
+    }
+  }
+
+  function escapeHtml(str){
+    const div = document.createElement('div');
+    div.textContent = str==null ? '' : str;
+    return div.innerHTML;
+  }
+
+  function formatDateLabel(key){
+    const [y,m,d] = key.split('-').map(Number);
+    const wd = ['일','월','화','수','목','금','토'][new Date(y,m-1,d).getDay()];
+    return `${y}.${m}.${d} (${wd})`;
+  }
+
+  function closeModal(){ 
+    overlay.classList.remove('show'); 
+    modal.innerHTML='';
+    instructorPasswordVerified = false; // 강사 비밀번호 상태 리셋
+  }
+  overlay.addEventListener('click', (e)=>{ if(e.target===overlay) closeModal(); });
+
+  function openDayModal(dateStr){
+    const dayEntries = visibleEntries().filter(e=>e.date===dateStr).sort((a,b)=>(a.time||'').localeCompare(b.time||''));
+    modal.innerHTML = `
+      <div class="modal-head">
+        <div>
+          <div class="title">${formatDateLabel(dateStr)}</div>
+          <div class="date-badge">신청된 일정 ${dayEntries.length}건</div>
+        </div>
+        <button class="close" data-act="close">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="entry-list">
+          ${dayEntries.length ? dayEntries.map(e=>`
+            <div class="entry-item" data-id="${e.id}">
+              <div class="entry-top">
+                <span class="route-tag" style="background:${routeColor(e.route)}">${escapeHtml(e.route)}</span>
+                <span class="entry-name">${escapeHtml(e.name)}</span>
+                <span class="entry-time">${escapeHtml(e.time||'')}</span>
+              </div>
+              <div class="entry-detail">${e.region ? '['+escapeHtml(e.region)+'] ' : ''}${(()=>{const et=EDUCATION_TYPES.find(t=>t.key===e.educationType); return et ? '['+et.icon+' '+et.label+'] ' : ''})()}${escapeHtml(e.detail || '')}${e.instructor ? ' · 강사: ' + escapeHtml(e.instructor) : ''}</div>
+            </div>
+          `).join('') : `<div class="status-msg" style="padding:14px 0;">아직 신청된 일정이 없어요.</div>`}
+        </div>
+        <button class="add-btn" data-act="add">+ 이 날짜에 새 일정 신청하기</button>
+      </div>
+    `;
+    overlay.classList.add('show');
+    modal.querySelector('[data-act="close"]').addEventListener('click', closeModal);
+    modal.querySelector('[data-act="add"]').addEventListener('click', ()=> openFormModal({date: dateStr}));
+    modal.querySelectorAll('.entry-item').forEach(el=>{
+      el.addEventListener('click', ()=>{
+        const entry = entries.find(x=>x.id===el.dataset.id);
+        openFormModal({date: dateStr, entry});
+      });
+    });
+  }
+
+  function optionsHtml(list, selected){
+    return list.map(n=>`<option value="${n}" ${n===selected?'selected':''}>${n}</option>`).join('')
+      + `<option value="__custom__">직접 입력...</option>`;
+  }
+
+  function openFormModal({date, entry}){
+    const isEdit = !!entry;
+    modal.innerHTML = `
+      <div class="modal-head">
+        <div>
+          <div class="title">${isEdit ? '일정 상세/수정' : '새 일정 신청'}</div>
+          <div class="date-badge">${formatDateLabel(date)}</div>
+        </div>
+        <button class="close" data-act="close">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="field">
+            <label>신청자 이름 <span class="req">*</span></label>
+            <input id="nameInput" type="text" placeholder="이름 입력" value="${entry?escapeHtml(entry.name):''}">
+          </div>
+          <div class="field">
+            <label>신청자 이메일 <span class="req">*</span></label>
+            <input id="emailInput" type="email" placeholder="이메일 주소" value="${entry?escapeHtml(entry.email):''}">
+          </div>
+          <div class="field" style="display:flex; align-items:flex-end; gap:16px;">
+            <div style="flex:1;">
+              <label>배정 강사 <span class="hint">(강사가 나중에 입력)</span></label>
+              <input id="instructorInput" type="text" placeholder="강사 이름 입력" value="${entry?escapeHtml(entry.instructor):''}">
+            </div>
+            <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:13px; margin:0; white-space:nowrap;">
+              <input type="checkbox" id="assignmentImpossibleCheckbox" ${entry&&entry.assignmentImpossible?'checked':''} style="cursor:pointer; margin:0;">
+              <span>배정 불가</span>
+            </label>
+          </div>
+          <div class="field">
+            <label>지역 선택 <span class="req">*</span></label>
+            <select id="regionSelect">${REGIONS.map(r=>`<option value="${r}" ${(entry?entry.region===r:(currentRegion!=='ALL'&&currentRegion===r))?'selected':''}>${r}</option>`).join('')}</select>
+          </div>
+          <div class="field">
+            <label>교육 유형 <span class="req">*</span></label>
+            <div style="display:flex; gap:16px;">
+              ${EDUCATION_TYPES.map(t=>`
+                <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
+                  <input type="radio" name="educationType" value="${t.key}" ${entry&&entry.educationType===t.key?'checked':''} style="margin:0;">
+                  <span>${t.icon} ${t.label}</span>
+                </label>
+              `).join('')}
+            </div>
+          </div>
+          <div class="row2">
+            <div class="field">
+              <label>경로 선택 <span class="req">*</span></label>
+              <select id="routeSelect">${routesForGroup(currentGroup).map(r=>`<option value="${r.key}" ${entry&&entry.route===r.key?'selected':''}>${r.key}</option>`).join('')}</select>
+            </div>
+            <div class="field">
+              <label>시작 시간 <span class="req">*</span></label>
+              <input id="timeInput" type="time" value="${entry?entry.time||'':'10:00'}">
+            </div>
+          </div>
+          <div class="field">
+            <label>교육 대상 <span class="req">*</span></label>
+            <input id="detailInput" type="text" placeholder="예: U+OO소매영업팀 / 삼성스토어 OO점" value="${entry?escapeHtml(entry.detail):''}">
+          </div>
+          <div class="field">
+            <label>교육장 주소 <span class="req">*</span></label>
+            <input id="addressInput" type="text" placeholder="예: 서울특별시 OO구 OO로 123, 3층 OOO회의실" value="${entry?escapeHtml(entry.address):''}">
+          </div>
+          <div class="row2">
+            <div class="field">
+              <label>예상 인원 <span class="req">*</span></label>
+              <input id="headcountInput" type="number" min="0" placeholder="15" value="${entry?escapeHtml(entry.headcount):''}">
+            </div>
+            <div class="field">
+              <label>이통사/매장 담당자 연락처 <span class="req">*</span></label>
+              <input id="clientContactInput" type="text" placeholder="이름/연락처" value="${entry?escapeHtml(entry.clientContact):''}">
+            </div>
+          </div>
+          <div class="field">
+            <label>한국총괄 담당자님 성함 <span class="req">*</span></label>
+            <input id="hqManagerInput" type="text" placeholder="예: U+영업그룹 OOO프로" value="${entry?escapeHtml(entry.hqManager):''}">
+          </div>
+          <div class="field">
+            <label>특이사항 (메모)</label>
+            <textarea id="memoInput" placeholder="예: 교육일정 하루 전에 영업팀별 담당자에게 사전 연락 요청드립니다.">${entry?escapeHtml(entry.memo):''}</textarea>
+          </div>
+          <div class="field">
+            <label>${isEdit ? '비밀번호 확인' : '비밀번호 설정'} <span class="req">*</span> <span class="hint">숫자 4자리${isEdit?' · 수정/삭제 시 필요':''}</span></label>
+            <input id="passwordInput" type="password" inputmode="numeric" maxlength="4" placeholder="숫자 4자리">
+            <div class="error-msg" id="pwError">${isEdit ? '수정하시려면 기존에 등록한 비밀번호를 입력해야 합니다.' : ''}</div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-act="cancel">취소</button>
+        ${isEdit ? `<button class="btn btn-danger" data-act="delete">삭제</button>` : ''}
+        <button class="btn btn-primary" data-act="save">${isEdit ? '일정 수정하기' : '신청하기'}</button>
+      </div>
+    `;
+    overlay.classList.add('show');
+
+    modal.querySelector('[data-act="close"]').addEventListener('click', ()=>{ closeModal(); openDayModal(date); });
+    modal.querySelector('[data-act="cancel"]').addEventListener('click', ()=>{ closeModal(); openDayModal(date); });
+
+    // 배정 강사 입력 필드 - 강사가 비밀번호 인증 후 입력
+    const instructorInput = modal.querySelector('#instructorInput');
+    if(instructorInput){
+      instructorInput.addEventListener('focus', (e)=>{
+        if(!instructorPasswordVerified){
+          e.preventDefault();
+          instructorPasswordVerified = false;
+          pendingInstructorInput = instructorInput;
+          showInstructorModal();
+        }
+      });
+    }
+
+    // 배정 불가 체크박스 - 강사가 비밀번호 인증 후 체크
+    const assignmentCheckbox = modal.querySelector('#assignmentImpossibleCheckbox');
+    if(assignmentCheckbox){
+      assignmentCheckbox.addEventListener('click', (e)=>{
+        if(!instructorPasswordVerified && e.target.checked){
+          e.preventDefault();
+          instructorPasswordVerified = false;
+          pendingInstructorInput = assignmentCheckbox;
+          showInstructorModal();
+        }
+      });
+    }
+
+    function collect(){
+      return {
+        name: modal.querySelector('#nameInput').value.trim(),
+        email: modal.querySelector('#emailInput').value.trim(),
+        instructor: modal.querySelector('#instructorInput').value.trim(),
+        assignmentImpossible: modal.querySelector('#assignmentImpossibleCheckbox').checked,
+        region: modal.querySelector('#regionSelect').value,
+        educationType: modal.querySelector('input[name="educationType"]:checked')?.value || '',
+        route: modal.querySelector('#routeSelect').value,
+        time: modal.querySelector('#timeInput').value,
+        detail: modal.querySelector('#detailInput').value.trim(),
+        address: modal.querySelector('#addressInput').value.trim(),
+        headcount: modal.querySelector('#headcountInput').value.trim(),
+        clientContact: modal.querySelector('#clientContactInput').value.trim(),
+        hqManager: modal.querySelector('#hqManagerInput').value.trim(),
+        memo: modal.querySelector('#memoInput').value.trim(),
+      };
+    }
+
+    const pwError = modal.querySelector('#pwError');
+    function showPwError(msg){ pwError.textContent = msg; pwError.classList.add('show'); }
+
+    modal.querySelector('[data-act="save"]').addEventListener('click', async ()=>{
+      const data = collect();
+      const pw = modal.querySelector('#passwordInput').value.trim();
+
+      if(!data.name){ showPwError('이름을 입력해주세요.'); return; }
+      if(!data.email){ showPwError('이메일을 입력해주세요.'); return; }
+      if(!data.detail){ showPwError('교육 대상을 입력해주세요.'); return; }
+      if(!data.address){ showPwError('교육장 주소를 입력해주세요.'); return; }
+      if(!data.headcount){ showPwError('예상 인원을 입력해주세요.'); return; }
+      if(!data.clientContact){ showPwError('이통사/매장 담당자 연락처를 입력해주세요.'); return; }
+      if(!data.hqManager){ showPwError('한국총괄 담당자님 성함을 입력해주세요.'); return; }
+      if(!data.educationType){ showPwError('교육 유형을 선택해주세요.'); return; }
+      
+      // 배정 강사 또는 배정 불가가 입력된 경우 비밀번호 검증 제외
+      const hasInstructorOrAssignmentStatus = data.instructor || data.assignmentImpossible;
+      
+      if(!hasInstructorOrAssignmentStatus && !/^\d{4}$/.test(pw)){ 
+        showPwError(isEdit ? '기존 비밀번호 4자리를 입력해주세요.' : '비밀번호 숫자 4자리를 설정해주세요.'); 
+        return; 
+      }
+
+      let shouldSendEmail = false;
+      
+      if(isEdit){
+        if(!hasInstructorOrAssignmentStatus && pw !== entry.password){ 
+          showPwError('비밀번호가 일치하지 않습니다.'); 
+          return; 
+        }
+        const idx = entries.findIndex(x=>x.id===entry.id);
+        const oldEntry = entries[idx];
+        // 배정 강사 입력 시는 기존 비밀번호 유지, 아니면 새 비밀번호 사용
+        const newPassword = hasInstructorOrAssignmentStatus ? entry.password : pw;
+        entries[idx] = { ...entry, ...data, date, password: newPassword, updatedAt: new Date().toISOString() };
+        
+        // 강사 배정 또는 배정 불가 상태가 변경되었으면 이메일 발송
+        const instructorChanged = oldEntry.instructor !== data.instructor;
+        const assignmentStatusChanged = oldEntry.assignmentImpossible !== data.assignmentImpossible;
+        shouldSendEmail = (instructorChanged || assignmentStatusChanged) && (data.instructor || data.assignmentImpossible);
+      } else {
+        entries.push({
+          id: 'e' + Date.now() + Math.random().toString(36).slice(2,8),
+          date, ...data, password: pw, createdAt: new Date().toISOString()
+        });
+      }
+      const btn = modal.querySelector('[data-act="save"]');
+      if(btn) {
+        btn.disabled = true; 
+        btn.textContent = '저장 중...';
+      }
+      
+      try {
+        const ok = await saveEntries();
+        if(ok){
+          showToast(isEdit ? '일정이 수정되었습니다.' : '일정이 신청되었습니다.');
+          renderLegend(); renderCalendar(); updateSyncLabel();
+          closeModal(); openDayModal(date);
+        } else {
+          if(btn) {
+            btn.disabled = false; 
+            btn.textContent = isEdit ? '일정 수정하기' : '신청하기';
+          }
+        }
+      } catch(err){
+        console.error('저장 오류:', err);
+        if(btn) {
+          btn.disabled = false; 
+          btn.textContent = isEdit ? '일정 수정하기' : '신청하기';
+        }
+        showToast('저장 중 오류가 발생했습니다.');
+      }
+    });
+
+    const delBtn = modal.querySelector('[data-act="delete"]');
+    if(delBtn){
+      delBtn.addEventListener('click', async ()=>{
+        const pw = modal.querySelector('#passwordInput').value.trim();
+        if(pw !== entry.password){ showPwError('비밀번호가 일치해야 삭제할 수 있습니다.'); return; }
+        delBtn.disabled = true; delBtn.textContent = '삭제 중...';
+        entries = entries.filter(x=>x.id!==entry.id);
+        const ok = await saveEntries();
+        if(ok){
+          showToast('일정이 삭제되었습니다.');
+          renderLegend(); renderCalendar(); updateSyncLabel();
+          closeModal(); openDayModal(date);
+        } else {
+          delBtn.disabled = false; delBtn.textContent = '삭제';
+        }
+      });
+    }
+  }
+
+  // ========== 지도 모달 ==========
+  const STORES_FOR_MAP = [
+    { id: 'store_001', name: '삼성스토어 강남점', region: '서울경기북부', address: '서울 강남구' },
+    { id: 'store_002', name: '삼성스토어 종로점', region: '서울경기북부', address: '서울 종로구' },
+    { id: 'store_003', name: '삼성스토어 명동점', region: '서울경기북부', address: '서울 중구' },
+    { id: 'store_004', name: '삼성스토어 인천점', region: '인천', address: '인천 연수구' },
+    { id: 'store_005', name: '삼성스토어 부평점', region: '인천', address: '인천 부평구' },
+    { id: 'store_006', name: '삼성스토어 수원점', region: '경기남부', address: '경기 수원시' },
+    { id: 'store_007', name: '삼성스토어 성남점', region: '경기남부', address: '경기 성남시' },
+    { id: 'store_008', name: '삼성스토어 춘천점', region: '강원', address: '강원 춘천시' },
+    { id: 'store_009', name: '삼성스토어 대전점', region: '대전충청', address: '대전 서구' },
+    { id: 'store_010', name: '삼성스토어 천안점', region: '대전충청', address: '충남 천안시' },
+    { id: 'store_011', name: '삼성스토어 광주점', region: '광주전라', address: '광주 동구' },
+    { id: 'store_012', name: '삼성스토어 전주점', region: '광주전라', address: '전북 전주시' },
+    { id: 'store_013', name: '삼성스토어 대구점', region: '대구경북', address: '대구 중구' },
+    { id: 'store_014', name: '삼성스토어 부산점', region: '부산경남', address: '부산 서구' },
+    { id: 'store_015', name: '삼성스토어 해운대점', region: '부산경남', address: '부산 해운대구' },
+    { id: 'store_016', name: '삼성스토어 제주점', region: '제주', address: '제주 제주시' }
+  ];
+
+  function openMapModal(){
+    const mapOverlay = document.getElementById('mapOverlay');
+    const mapRegionSelect = document.getElementById('mapRegionSelect');
+    const mapSearchInput = document.getElementById('mapSearchInput');
+    mapOverlay.style.display = 'flex';
+    
+    // 지역 옵션 채우기
+    if(mapRegionSelect.options.length <= 1){
+      REGIONS.forEach(r=>{
+        const opt = document.createElement('option');
+        opt.value = r;
+        opt.textContent = r;
+        mapRegionSelect.appendChild(opt);
+      });
+    }
+    
+    // 이벤트 리스너 중복 등록 방지
+    mapRegionSelect.onchange = ()=>{
+      renderMapStores(mapRegionSelect.value, mapSearchInput.value);
+    };
+    
+    mapSearchInput.oninput = ()=>{
+      renderMapStores(mapRegionSelect.value, mapSearchInput.value);
+    };
+  }
+
+  function closeMapModal(){
+    const mapOverlay = document.getElementById('mapOverlay');
+    mapOverlay.style.display = 'none';
+  }
+
+  function renderMapStores(region, searchText){
+    const container = document.getElementById('mapStoresContainer');
+    container.innerHTML = '';
+    
+    let filteredStores = STORES_FOR_MAP;
+    
+    // 지역 필터
+    if(region){
+      filteredStores = filteredStores.filter(s=>s.region===region);
+    }
+    
+    // 검색 필터
+    if(searchText){
+      filteredStores = filteredStores.filter(s=>
+        s.name.includes(searchText) || s.address.includes(searchText)
+      );
+    }
+    
+    if(filteredStores.length === 0){
+      container.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:40px 20px; color:#6b7280;">📭 매장이 없습니다</div>';
+      return;
+    }
+    
+    filteredStores.forEach(store=>{
+      const stats = getStoreEducationStats(store.name);
+      const status = getEducationStatus(stats);
+      
+      const card = document.createElement('div');
+      card.style.cssText = `
+        background:white; border-radius:12px; padding:16px; box-shadow:0 2px 8px rgba(0,0,0,0.08);
+        border-left:4px solid ${status.borderColor};
+      `;
+      card.innerHTML = `
+        <div style="font-size:15px; font-weight:700; color:#1a1a2e; margin-bottom:8px;">${store.name}</div>
+        <div style="font-size:12px; color:#6b7280; margin-bottom:12px;">📍 ${store.address}</div>
+        
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px;">
+          <div style="padding:8px; background:#f9f9fb; border-radius:8px; text-align:center;">
+            <div style="font-size:11px; color:#6b7280; margin-bottom:4px;">교육 횟수</div>
+            <div style="font-size:16px; font-weight:700; color:#1a1a2e;">${stats.count}</div>
+          </div>
+          <div style="padding:8px; background:#f9f9fb; border-radius:8px; text-align:center;">
+            <div style="font-size:11px; color:#6b7280; margin-bottom:4px;">최근 교육</div>
+            <div style="font-size:11px; font-weight:700; color:#1a1a2e;">${stats.latest || '-'}</div>
+          </div>
+        </div>
+        
+        <div style="text-align:center;">
+          <span style="display:inline-block; padding:4px 10px; border-radius:20px; font-size:11px; font-weight:700; background:${status.bgColor}; color:${status.textColor};">
+            ${status.label}
+          </span>
+        </div>
+        
+        ${stats.count > 0 ? `
+          <div style="margin-top:12px; padding-top:12px; border-top:1px solid #e5e7eb;">
+            <strong style="color:#1a1a2e; font-size:12px;">📋 최근 교육 기록</strong>
+            ${stats.history.map(h=>`
+              <div style="font-size:11px; color:#6b7280; line-height:1.6; margin-top:4px;">
+                • <strong style="color:#1a1a2e;">${h.date}</strong> - ${h.instructor} 강사<br/>
+                &nbsp;&nbsp;대상: ${h.detail}
+              </div>
+            `).join('')}
+          </div>
+        ` : ''}
+      `;
+      container.appendChild(card);
+    });
+  }
+
+  function getStoreEducationStats(storeName){
+    const history = [];
+    entries.forEach(e=>{
+      // 교육 대상(detail)에서 매장 이름이 포함되면 해당 매장의 교육 기록으로 간주
+      if(e.detail && e.detail.includes('매장') && e.detail.includes('점')){
+        history.push({
+          date: e.date||'',
+          instructor: e.instructor||'-',
+          detail: e.detail||''
+        });
+      }
+    });
+    
+    // 또는 더 간단하게: 매장명 직접 일치
+    const matchingEntries = entries.filter(e=>{
+      return e.detail && (e.detail.includes(storeName) || e.detail.includes(storeName.split(' ')[1]));
+    });
+    
+    const count = matchingEntries.length;
+    const latest = count > 0 ? matchingEntries[0].date : null;
+    const recentHistory = matchingEntries.slice(0,3).map(e=>({
+      date: e.date||'',
+      instructor: e.instructor||'-',
+      detail: e.detail||''
+    }));
+    
+    return { count, latest, history: recentHistory };
+  }
+
+  function getEducationStatus(stats){
+    if(stats.count === 0) return { 
+      label: '미교육', 
+      bgColor: 'rgba(255,59,48,0.1)', 
+      textColor: '#ff3b30',
+      borderColor: '#ff3b30'
+    };
+    if(stats.count === 1) return { 
+      label: '부분 교육', 
+      bgColor: 'rgba(255,149,0,0.1)', 
+      textColor: '#ff9500',
+      borderColor: '#ff9500'
+    };
+    return { 
+      label: '완료됨', 
+      bgColor: 'rgba(52,199,89,0.1)', 
+      textColor: '#34c759',
+      borderColor: '#34c759'
+    };
+  }
+
+  // ========== 관리자 모드 ==========
+  function showAdminModal(){
+    const overlay = document.getElementById('adminOverlay');
+    if(overlay) overlay.style.display = 'flex';
+    const input = document.getElementById('adminPwInput');
+    if(input) {
+      input.value = '';
+      setTimeout(()=>input.focus(), 100);
+    }
+  }
+
+  function hideAdminModal(){
+    const overlay = document.getElementById('adminOverlay');
+    if(overlay) overlay.style.display = 'none';
+  }
+
+  function checkAdminPassword(){
+    const pw = document.getElementById('adminPwInput');
+    const error = document.getElementById('adminError');
+    const val = pw ? pw.value : '';
+    
+    if(val === 'Straining!'){
+      hideAdminModal();
+      
+      // 월별 통계, 매장별 교육 현황 버튼 표시
+      const statsBtn = document.getElementById('statsBtn');
+      const mapBtn = document.getElementById('mapBtn');
+      if(statsBtn) statsBtn.style.display = 'flex';
+      if(mapBtn) mapBtn.style.display = 'flex';
+      
+      showToast('✅ 관리자 모드로 진입했습니다');
+    } else {
+      if(error) {
+        error.textContent = '❌ 비밀번호가 일치하지 않습니다';
+        error.style.display = 'block';
+      }
+      if(pw) pw.value = '';
+    }
+  }
+
+  // 이벤트
+  const adminBtn = document.getElementById('adminBtn');
+  if(adminBtn) adminBtn.addEventListener('click', showAdminModal);
+  
+  const adminOkBtn = document.getElementById('adminOkBtn');
+  if(adminOkBtn) adminOkBtn.addEventListener('click', checkAdminPassword);
+  
+  const adminCloseBtn = document.getElementById('adminCloseBtn');
+  if(adminCloseBtn) adminCloseBtn.addEventListener('click', hideAdminModal);
+  
+  const adminPwInput = document.getElementById('adminPwInput');
+  if(adminPwInput) adminPwInput.addEventListener('keypress', (e)=>{
+    if(e.key === 'Enter') checkAdminPassword();
+  });
+  
+  const adminOverlay = document.getElementById('adminOverlay');
+  if(adminOverlay) adminOverlay.addEventListener('click', (e)=>{
+    if(e.target.id === 'adminOverlay') hideAdminModal();
+  });
+
+  document.getElementById('mapBtn').addEventListener('click', openMapModal);
+  document.getElementById('mapCloseBtn').addEventListener('click', closeMapModal);
+  document.getElementById('mapOverlay').addEventListener('click', (e)=>{
+    if(e.target.id === 'mapOverlay') closeMapModal();
+  });
+
+  // ========== 월별 통계 ==========
+  function openStatsModal(){
+    const statsOverlay = document.getElementById('statsOverlay');
+    statsOverlay.style.display = 'flex';
+    renderStats('current');
+  }
+
+  function closeStatsModal(){
+    const statsOverlay = document.getElementById('statsOverlay');
+    statsOverlay.style.display = 'none';
+  }
+
+  function getStatsPeriod(){
+    return document.querySelector('input[name="statsPeriod"]:checked').value;
+  }
+
+  function getStatsGroup(){
+    return document.querySelector('input[name="statsGroup"]:checked').value || 'MX';
+  }
+
+  function getStatsEntries(){
+    const period = getStatsPeriod();
+    const group = getStatsGroup();
+    
+    // 현재 그룹의 entries 사용
+    let groupEntries = entries;
+    
+    if(period === 'cumulative'){
+      return groupEntries; // 전체 데이터
+    } else {
+      // 현재 월만
+      const monthStr = String(currentMonth).padStart(2,'0');
+      return groupEntries.filter(e=>e.date && e.date.startsWith(`${YEAR}-${monthStr}`));
+    }
+  }
+
+  function renderStats(period){
+    const container = document.getElementById('statsContainer');
+    if(!container) {
+      console.error('statsContainer not found');
+      return;
+    }
+    container.innerHTML = '';
+    
+    const statsEntries = getStatsEntries();
+    
+    if(statsEntries.length === 0){
+      container.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:40px 20px; color:#6b7280;">📭 통계 데이터가 없습니다</div>';
+      return;
+    }
+    
+    // 경로별 통계
+    const routeStats = getRouteStats(statsEntries);
+    const regionStats = getRegionStats(statsEntries);
+    const group = getStatsGroup();
+    const groupLabel = group === 'MX' ? '[MX]' : '[CE]';
+    
+    // 경로별 교육 횟수
+    const routeCountChart = createPieChart(`${groupLabel} 경로별 교육 횟수`, routeStats.count, ['#E0357C','#E0433B','#E08A2B','#8B1E3F','#1428A0','#B8860B','#D84315','#2E7D32','#6A1B9A','#6B6D82']);
+    container.appendChild(routeCountChart);
+    
+    // 경로별 교육 인원수
+    const routeHeadcountChart = createPieChart(`${groupLabel} 경로별 교육 인원수`, routeStats.headcount, ['#E0357C','#E0433B','#E08A2B','#8B1E3F','#1428A0','#B8860B','#D84315','#2E7D32','#6A1B9A','#6B6D82']);
+    container.appendChild(routeHeadcountChart);
+    
+    // 지역별 교육 횟수
+    const regionCountChart = createPieChart(`${groupLabel} 지역별 교육 횟수`, regionStats.count);
+    container.appendChild(regionCountChart);
+    
+    // 지역별 교육 인원수
+    const regionHeadcountChart = createPieChart(`${groupLabel} 지역별 교육 인원수`, regionStats.headcount);
+    container.appendChild(regionHeadcountChart);
+    
+    // 요약 통계
+    const groupFullLabel = group === 'MX' ? 'MX (모바일·PC·태블릿·웨어러블)' : 'CE (리빙·주방·TV)';
+    const summaryDiv = document.createElement('div');
+    summaryDiv.style.cssText = 'grid-column:1/-1; background:white; border-radius:12px; padding:20px; box-shadow:0 2px 8px rgba(0,0,0,0.08);';
+    summaryDiv.innerHTML = `
+      <h3 style="font-size:16px; font-weight:700; color:#1a1a2e; margin-bottom:4px;">📋 통계 요약</h3>
+      <p style="font-size:12px; color:#6b7280; margin-bottom:16px;">${groupFullLabel}</p>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(120px, 1fr)); gap:16px;">
+        <div style="text-align:center; padding:12px; background:#f0f4ff; border-radius:8px;">
+          <div style="font-size:11px; color:#6b7280; margin-bottom:4px;">총 교육 횟수</div>
+          <div style="font-size:24px; font-weight:700; color:#5B4FE0;">${statsEntries.length}</div>
+        </div>
+        <div style="text-align:center; padding:12px; background:#f0f4ff; border-radius:8px;">
+          <div style="font-size:11px; color:#6b7280; margin-bottom:4px;">총 교육 인원</div>
+          <div style="font-size:24px; font-weight:700; color:#5B4FE0;">${statsEntries.reduce((sum,e)=>sum+(parseInt(e.headcount)||0), 0)}</div>
+        </div>
+        <div style="text-align:center; padding:12px; background:#f0f4ff; border-radius:8px;">
+          <div style="font-size:11px; color:#6b7280; margin-bottom:4px;">교육 지역 수</div>
+          <div style="font-size:24px; font-weight:700; color:#5B4FE0;">${new Set(statsEntries.map(e=>e.region)).size}</div>
+        </div>
+        <div style="text-align:center; padding:12px; background:#f0f4ff; border-radius:8px;">
+          <div style="font-size:11px; color:#6b7280; margin-bottom:4px;">교육 경로 수</div>
+          <div style="font-size:24px; font-weight:700; color:#5B4FE0;">${new Set(statsEntries.map(e=>e.route)).size}</div>
+        </div>
+      </div>
+    `;
+    container.appendChild(summaryDiv);
+  }
+
+  function getRouteStats(statsEntries){
+    const count = {};
+    const headcount = {};
+    
+    statsEntries.forEach(e=>{
+      const route = e.route || '미지정';
+      count[route] = (count[route]||0) + 1;
+      headcount[route] = (headcount[route]||0) + (parseInt(e.headcount)||0);
+    });
+    
+    return { count, headcount };
+  }
+
+  function getRegionStats(statsEntries){
+    const count = {};
+    const headcount = {};
+    
+    statsEntries.forEach(e=>{
+      const region = e.region || '미지정';
+      count[region] = (count[region]||0) + 1;
+      headcount[region] = (headcount[region]||0) + (parseInt(e.headcount)||0);
+    });
+    
+    return { count, headcount };
+  }
+
+  function createPieChart(title, data, colors){
+    const container = document.createElement('div');
+    container.style.cssText = 'background:white; border-radius:12px; padding:20px; box-shadow:0 2px 8px rgba(0,0,0,0.08);';
+    
+    const keys = Object.keys(data);
+    if(keys.length === 0){
+      container.innerHTML = `<div style="text-align:center; padding:20px;"><strong>${title}</strong><p style="color:#6b7280; margin-top:10px;">데이터 없음</p></div>`;
+      return container;
+    }
+    
+    const total = keys.reduce((sum,k)=>sum+data[k], 0);
+    
+    // SVG 원형 그래프
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('viewBox', '0 0 220 220');
+    svg.setAttribute('style', 'width:100%; height:auto; max-width:250px;');
+    
+    let startAngle = -90;
+    const defaultColors = ['#FF6B6B','#4ECDC4','#45B7D1','#FFA07A','#98D8C8','#F7DC6F','#BB8FCE','#85C1E9','#F8B195','#C39BD3'];
+    
+    keys.forEach((key, idx)=>{
+      const value = data[key];
+      const sliceAngle = (value / total) * 360;
+      const endAngle = startAngle + sliceAngle;
+      
+      const x1 = 110 + 80 * Math.cos(startAngle * Math.PI / 180);
+      const y1 = 110 + 80 * Math.sin(startAngle * Math.PI / 180);
+      const x2 = 110 + 80 * Math.cos(endAngle * Math.PI / 180);
+      const y2 = 110 + 80 * Math.sin(endAngle * Math.PI / 180);
+      
+      const largeArc = sliceAngle > 180 ? 1 : 0;
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      path.setAttribute('d', `M 110 110 L ${x1} ${y1} A 80 80 0 ${largeArc} 1 ${x2} ${y2} Z`);
+      path.setAttribute('fill', colors ? (colors[idx] || defaultColors[idx % defaultColors.length]) : defaultColors[idx % defaultColors.length]);
+      svg.appendChild(path);
+      
+      startAngle = endAngle;
+    });
+    
+    // 범례
+    const legend = document.createElement('div');
+    legend.style.cssText = 'margin-top:16px; display:grid; grid-template-columns:repeat(auto-fit, minmax(100px, 1fr)); gap:8px; font-size:11px;';
+    
+    keys.forEach((key, idx)=>{
+      const value = data[key];
+      const percent = ((value/total)*100).toFixed(1);
+      const color = colors ? (colors[idx] || defaultColors[idx % defaultColors.length]) : defaultColors[idx % defaultColors.length];
+      
+      const item = document.createElement('div');
+      item.style.cssText = 'display:flex; align-items:center; gap:6px;';
+      item.innerHTML = `<div style="width:12px; height:12px; background:${color}; border-radius:2px;"></div><span><strong>${key}</strong><br/>${value}건 (${percent}%)</span>`;
+      legend.appendChild(item);
+    });
+    
+    const title_el = document.createElement('h4');
+    title_el.style.cssText = 'margin:0 0 16px 0; font-size:14px; font-weight:700; color:#1a1a2e;';
+    title_el.textContent = title;
+    
+    container.innerHTML = '';
+    container.appendChild(title_el);
+    container.appendChild(svg);
+    container.appendChild(legend);
+    
+    return container;
+  }
+
+  document.getElementById('statsBtn').addEventListener('click', openStatsModal);
+  document.getElementById('statsCloseBtn').addEventListener('click', closeStatsModal);
+  document.getElementById('statsOverlay').addEventListener('click', (e)=>{
+    if(e.target.id === 'statsOverlay') closeStatsModal();
+  });
+  
+  document.querySelectorAll('input[name="statsPeriod"]').forEach(radio=>{
+    radio.addEventListener('change', ()=>renderStats());
+  });
+  
+  document.querySelectorAll('input[name="statsGroup"]').forEach(radio=>{
+    radio.addEventListener('change', ()=>renderStats());
+  });
+
+  // ========== 강사 비밀번호 ==========
+  let instructorPasswordVerified = false;
+  let pendingInstructorInput = null;
+
+  function showInstructorModal(){
+    const overlay = document.getElementById('instructorOverlay');
+    if(overlay) overlay.style.display = 'flex';
+    const input = document.getElementById('instructorPwInput');
+    if(input) {
+      input.value = '';
+      setTimeout(()=>input.focus(), 100);
+    }
+  }
+
+  function hideInstructorModal(){
+    const overlay = document.getElementById('instructorOverlay');
+    if(overlay) overlay.style.display = 'none';
+  }
+
+  function verifyInstructorPassword(){
+    const pw = document.getElementById('instructorPwInput');
+    const error = document.getElementById('instructorError');
+    const val = pw ? pw.value : '';
+    
+    if(val === 'multi'){
+      hideInstructorModal();
+      instructorPasswordVerified = true;
+      
+      // 입력 필드에 포커스 또는 체크박스 체크
+      if(pendingInstructorInput) {
+        if(pendingInstructorInput.id === 'assignmentImpossibleCheckbox'){
+          // 체크박스인 경우 체크
+          pendingInstructorInput.checked = true;
+        } else {
+          // 입력 필드인 경우 포커스
+          pendingInstructorInput.focus();
+        }
+      }
+      showToast('✅ 강사 정보 입력이 활성화되었습니다');
+    } else {
+      if(error) {
+        error.textContent = '❌ 비밀번호가 일치하지 않습니다';
+        error.style.display = 'block';
+      }
+      if(pw) pw.value = '';
+    }
+  }
+
+  // 강사 비밀번호 모달 이벤트
+  const instructorOkBtn = document.getElementById('instructorOkBtn');
+  if(instructorOkBtn) instructorOkBtn.addEventListener('click', verifyInstructorPassword);
+  
+  const instructorCloseBtn = document.getElementById('instructorCloseBtn');
+  if(instructorCloseBtn) instructorCloseBtn.addEventListener('click', hideInstructorModal);
+  
+  const instructorPwInput = document.getElementById('instructorPwInput');
+  if(instructorPwInput) instructorPwInput.addEventListener('keypress', (e)=>{
+    if(e.key === 'Enter') verifyInstructorPassword();
+  });
+  
+  const instructorOverlay = document.getElementById('instructorOverlay');
+  if(instructorOverlay) instructorOverlay.addEventListener('click', (e)=>{
+    if(e.target.id === 'instructorOverlay') hideInstructorModal();
+  });
+
+  loadEntries();
+})();
+</script>
+</body>
+</html>
